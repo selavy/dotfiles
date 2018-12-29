@@ -1,5 +1,5 @@
 #!/bin/sh
 
 FPATH=$(readlink -f ./tmux.conf)
-echo "Creating symlink ~/.tmux.conf -> $FPATH"
+echo "Installing ~/.tmux.conf"
 ln -f -s $FPATH ~/.tmux.conf
