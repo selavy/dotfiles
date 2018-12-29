@@ -2,4 +2,9 @@
 
 die() { echo "$*" 1>&2 ; exit 1; }
 
-./vim/setup-vim.sh or die "Failed to install neovim setup!"
+install() {
+    cd $1 && ./setup-$1.sh && cd .. or die "Failed to install $1 setup!"
+}
+
+install vim
+install tmux
