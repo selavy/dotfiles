@@ -159,6 +159,8 @@ define reg
     printf "RDX:"
     echo \033[0m
     printf " 0x%016lX  ", $rdx
+    echo \033[32m
+    printf "FLAGS: "
     echo \033[1m\033[4m\033[31m
     flags
     echo \033[0m
@@ -315,7 +317,8 @@ define reg
 	if ($64BITS == 1)
 	 printf "\t\t\t\t"
 	end
-    dumpjump
+    # NOTE(peter): dumpjump doesn't appear to work, so skipping for now
+    # dumpjump
     printf "\n"
 end
 document reg
@@ -380,3 +383,4 @@ document smallregisters
 Create the 16 and 8 bit cpu registers (gdb doesn't have them by default)
 And 32bits if we are dealing with 64bits binaries
 end
+
