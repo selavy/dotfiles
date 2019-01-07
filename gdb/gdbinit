@@ -1,0 +1,382 @@
+
+# set to 1 to enable 64bits target by default (32bit is the default)
+set $64BITS = 1
+
+set confirm off
+set verbose off
+set prompt \033[31mgdb$ \033[0m
+
+set output-radix 0x10
+set input-radix 0x10
+
+# These make gdb never pause in its output
+set height 0
+set width 0
+
+# Use Intel syntax for disassembly
+set disassembly-flavor intel
+
+# List all breakpoints alias
+define bpl
+    info breakpoints
+end
+document bpl
+List all breakpoints.
+end
+
+# Print stack frame information
+define frame
+    info frame
+    info args
+    info locals
+end
+document frame
+Print stack frame.
+end
+
+# Print information about variable
+define var
+    if $argc == 0
+        info variables
+    end
+    if $argc == 1
+        info variables $arg0
+    end
+    if $argc > 1
+        help var
+    end
+end
+document var
+Print all global and static variable names (symbols), or those matching REGEXP.
+Usage: var <REGEXP>
+end
+
+# Print FLAGS
+define flags
+# OF (overflow) flag
+    if (($eflags >> 0xB) & 1)
+        printf "O "
+        set $_of_flag = 1
+    else
+        printf "o "
+        set $_of_flag = 0
+    end
+    if (($eflags >> 0xA) & 1)
+        printf "D "
+    else
+        printf "d "
+    end
+    if (($eflags >> 9) & 1)
+        printf "I "
+    else
+        printf "i "
+    end
+    if (($eflags >> 8) & 1)
+        printf "T "
+    else
+        printf "t "
+    end
+# SF (sign) flag
+    if (($eflags >> 7) & 1)
+        printf "S "
+        set $_sf_flag = 1
+    else
+        printf "s "
+        set $_sf_flag = 0
+    end
+# ZF (zero) flag
+    if (($eflags >> 6) & 1)
+        printf "Z "
+	set $_zf_flag = 1
+    else
+        printf "z "
+	set $_zf_flag = 0
+    end
+    if (($eflags >> 4) & 1)
+        printf "A "
+    else
+        printf "a "
+    end
+# PF (parity) flag
+    if (($eflags >> 2) & 1)
+        printf "P "
+	set $_pf_flag = 1
+    else
+        printf "p "
+	set $_pf_flag = 0
+    end
+# CF (carry) flag
+    if ($eflags & 1)
+        printf "C "
+	set $_cf_flag = 1
+    else
+        printf "c "
+	set $_cf_flag = 0
+    end
+    printf "\n"
+end
+document flags
+Print flags register.
+end
+
+# Print EFLAGS
+define eflags
+    printf "     OF <%d>  DF <%d>  IF <%d>  TF <%d>",\
+           (($eflags >> 0xB) & 1), (($eflags >> 0xA) & 1), \
+           (($eflags >> 9) & 1), (($eflags >> 8) & 1)
+    printf "  SF <%d>  ZF <%d>  AF <%d>  PF <%d>  CF <%d>\n",\
+           (($eflags >> 7) & 1), (($eflags >> 6) & 1),\
+           (($eflags >> 4) & 1), (($eflags >> 2) & 1), ($eflags & 1)
+    printf "     ID <%d>  VIP <%d> VIF <%d> AC <%d>",\
+           (($eflags >> 0x15) & 1), (($eflags >> 0x14) & 1), \
+           (($eflags >> 0x13) & 1), (($eflags >> 0x12) & 1)
+    printf "  VM <%d>  RF <%d>  NT <%d>  IOPL <%d>\n",\
+           (($eflags >> 0x11) & 1), (($eflags >> 0x10) & 1),\
+           (($eflags >> 0xE) & 1), (($eflags >> 0xC) & 3)
+end
+document eflags
+Print eflags register.
+end
+
+# Print registers
+define reg
+ if ($64BITS == 1)
+# 64bits stuff
+    printf "  "
+    echo \033[32m
+    printf "RAX:"
+    echo \033[0m
+    printf " 0x%016lX  ", $rax
+    echo \033[32m
+    printf "RBX:"
+    echo \033[0m
+    printf " 0x%016lX  ", $rbx
+    echo \033[32m
+    printf "RCX:"
+    echo \033[0m
+    printf " 0x%016lX  ", $rcx
+    echo \033[32m
+    printf "RDX:"
+    echo \033[0m
+    printf " 0x%016lX  ", $rdx
+    echo \033[1m\033[4m\033[31m
+    flags
+    echo \033[0m
+    printf "  "
+    echo \033[32m
+    printf "RSI:"
+    echo \033[0m
+    printf " 0x%016lX  ", $rsi
+    echo \033[32m
+    printf "RDI:"
+    echo \033[0m
+    printf " 0x%016lX  ", $rdi
+    echo \033[32m
+    printf "RBP:"
+    echo \033[0m
+    printf " 0x%016lX  ", $rbp
+    echo \033[32m
+    printf "RSP:"
+    echo \033[0m
+    printf " 0x%016lX  ", $rsp
+    echo \033[32m
+    printf "RIP:"
+    echo \033[0m
+    printf " 0x%016lX\n  ", $rip
+    echo \033[32m
+    printf "R8 :"
+    echo \033[0m
+    printf " 0x%016lX  ", $r8
+    echo \033[32m
+    printf "R9 :"
+    echo \033[0m
+    printf " 0x%016lX  ", $r9
+    echo \033[32m
+    printf "R10:"
+    echo \033[0m
+    printf " 0x%016lX  ", $r10
+    echo \033[32m
+    printf "R11:"
+    echo \033[0m
+    printf " 0x%016lX  ", $r11
+    echo \033[32m
+    printf "R12:"
+    echo \033[0m
+    printf " 0x%016lX\n  ", $r12
+    echo \033[32m
+    printf "R13:"
+    echo \033[0m
+    printf " 0x%016lX  ", $r13
+    echo \033[32m
+    printf "R14:"
+    echo \033[0m
+    printf " 0x%016lX  ", $r14
+    echo \033[32m
+    printf "R15:"
+    echo \033[0m
+    printf " 0x%016lX\n  ", $r15
+    echo \033[32m
+    printf "CS:"
+    echo \033[0m
+    printf " %04X  ", $cs
+    echo \033[32m
+    printf "DS:"
+    echo \033[0m
+    printf " %04X  ", $ds
+    echo \033[32m
+    printf "ES:"
+    echo \033[0m
+    printf " %04X  ", $es
+    echo \033[32m
+    printf "FS:"
+    echo \033[0m
+    printf " %04X  ", $fs
+    echo \033[32m
+    printf "GS:"
+    echo \033[0m
+    printf " %04X  ", $gs
+    echo \033[32m
+    printf "SS:"
+    echo \033[0m
+    printf " %04X", $ss
+    echo \033[0m
+# 32bits stuff
+ else
+    printf "  "
+    echo \033[32m
+    printf "EAX:"
+    echo \033[0m
+    printf " 0x%08X  ", $eax
+    echo \033[32m
+    printf "EBX:"
+    echo \033[0m
+    printf " 0x%08X  ", $ebx
+    echo \033[32m
+    printf "ECX:"
+    echo \033[0m
+    printf " 0x%08X  ", $ecx
+    echo \033[32m
+    printf "EDX:"
+    echo \033[0m
+    printf " 0x%08X  ", $edx
+    echo \033[1m\033[4m\033[31m
+    flags
+    echo \033[0m
+    printf "  "
+    echo \033[32m
+    printf "ESI:"
+    echo \033[0m
+    printf " 0x%08X  ", $esi
+    echo \033[32m
+    printf "EDI:"
+    echo \033[0m
+    printf " 0x%08X  ", $edi
+    echo \033[32m
+    printf "EBP:"
+    echo \033[0m
+    printf " 0x%08X  ", $ebp
+    echo \033[32m
+    printf "ESP:"
+    echo \033[0m
+    printf " 0x%08X  ", $esp
+    echo \033[32m
+    printf "EIP:"
+    echo \033[0m
+    printf " 0x%08X\n  ", $eip
+    echo \033[32m
+    printf "CS:"
+    echo \033[0m
+    printf " %04X  ", $cs
+    echo \033[32m
+    printf "DS:"
+    echo \033[0m
+    printf " %04X  ", $ds
+    echo \033[32m
+    printf "ES:"
+    echo \033[0m
+    printf " %04X  ", $es
+    echo \033[32m
+    printf "FS:"
+    echo \033[0m
+    printf " %04X  ", $fs
+    echo \033[32m
+    printf "GS:"
+    echo \033[0m
+    printf " %04X  ", $gs
+    echo \033[32m
+    printf "SS:"
+    echo \033[0m
+    printf " %04X", $ss
+    echo \033[0m
+ end
+# call smallregisters
+	smallregisters
+# display conditional jump routine
+	if ($64BITS == 1)
+	 printf "\t\t\t\t"
+	end
+    dumpjump
+    printf "\n"
+end
+document reg
+Print CPU registers.
+end
+
+# Print smaller portion of registers
+define smallregisters
+ if ($64BITS == 1)
+#64bits stuff
+	# from rax
+	set $eax = $rax & 0xffffffff
+	set $ax = $rax & 0xffff
+	set $al = $ax & 0xff
+	set $ah = $ax >> 8
+	# from rbx
+	set $bx = $rbx & 0xffff
+	set $bl = $bx & 0xff
+	set $bh = $bx >> 8
+	# from rcx
+	set $ecx = $rcx & 0xffffffff
+	set $cx = $rcx & 0xffff
+	set $cl = $cx & 0xff
+	set $ch = $cx >> 8
+	# from rdx
+	set $edx = $rdx & 0xffffffff
+	set $dx = $rdx & 0xffff
+	set $dl = $dx & 0xff
+	set $dh = $dx >> 8
+	# from rsi
+	set $esi = $rsi & 0xffffffff
+	set $si = $rsi & 0xffff
+	# from rdi
+	set $edi = $rdi & 0xffffffff
+	set $di = $rdi & 0xffff
+#32 bits stuff
+ else
+	# from eax
+	set $ax = $eax & 0xffff
+	set $al = $ax & 0xff
+	set $ah = $ax >> 8
+	# from ebx
+	set $bx = $ebx & 0xffff
+	set $bl = $bx & 0xff
+	set $bh = $bx >> 8
+	# from ecx
+	set $cx = $ecx & 0xffff
+	set $cl = $cx & 0xff
+	set $ch = $cx >> 8
+	# from edx
+	set $dx = $edx & 0xffff
+	set $dl = $dx & 0xff
+	set $dh = $dx >> 8
+	# from esi
+	set $si = $esi & 0xffff
+	# from edi
+	set $di = $edi & 0xffff
+ end
+
+end
+document smallregisters
+Create the 16 and 8 bit cpu registers (gdb doesn't have them by default)
+And 32bits if we are dealing with 64bits binaries
+end
