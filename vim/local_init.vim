@@ -23,4 +23,4 @@ function! SwitchSourceHeader()
   endif
 endfunction
 
-nmap ,s :call SwitchSourceHeader()<CR>
+nmap <leader>s :call SwitchSourceHeader()<CR>
