@@ -24,3 +24,5 @@ function! SwitchSourceHeader()
 endfunction
 
 nmap <leader>s :call SwitchSourceHeader()<CR>
+
+cabbr <expr> %% expand('%:p:h')
