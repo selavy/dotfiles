@@ -12,3 +12,15 @@ set cino=N-s
 """ TODO(peter): detect if clang or gcc present?
 let g:syntastic_cpp_compiler = 'clang++'
 let g:syntastic_cpp_compiler_options = '-std=c++17'
+
+
+function! SwitchSourceHeader()
+  "update!
+  if (expand ("%:e") == "cpp")
+    find %:t:r.h
+  else
+    find %:t:r.cpp
+  endif
+endfunction
+
+nmap ,s :call SwitchSourceHeader()<CR>
