@@ -104,6 +104,8 @@ Plug 'jelera/vim-javascript-syntax'
 Plug 'davidhalter/jedi-vim'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 
+" clang-format support
+Plug 'rhysd/vim-clang-format'
 
 "*****************************************************************************
 "*****************************************************************************
@@ -369,7 +371,7 @@ let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/
 
 " The Silver Searcher
 if executable('ag')
-  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
+  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git --ignore "*tags" -g ""'
   set grepprg=ag\ --nogroup\ --nocolor
 endif
 
