@@ -1,5 +1,6 @@
 [user]
 	name = Peter Lesslie
+	email = pclesslie@gmail.com
 [push]
 	default = simple
 [alias]
