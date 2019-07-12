@@ -18,7 +18,7 @@ function! SwitchSourceHeader()
   if (expand ("%:e") == "cpp")
     find %:t:r.h
   else
-    find %:t:r.cpp
+    find %:t:r.c*
   endif
 endfunction
 
@@ -57,3 +57,5 @@ if g:colors_name is# 'molokai'
     highlight clear IncSearch
     highlight default IncSearch term=bold cterm=bold ctermbg=LightYellow guibg=#13354A ctermfg=DarkGray guifg=#808080
 endif
+
+let g:pymode_python = 'python3'
