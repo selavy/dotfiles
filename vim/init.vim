@@ -105,6 +105,8 @@ Plug 'jelera/vim-javascript-syntax'
 Plug 'davidhalter/jedi-vim'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 
+" clang-format support
+Plug 'rhysd/vim-clang-format'
 
 "*****************************************************************************
 "*****************************************************************************
@@ -263,7 +265,7 @@ let g:NERDTreeShowBookmarks=1
 let g:nerdtree_tabs_focus_on_files=1
 let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
 let g:NERDTreeWinSize = 50
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite,*/.git/*,*/build/*
 nnoremap <silent> <F2> :NERDTreeFind<CR>
 nnoremap <silent> <F3> :NERDTreeToggle<CR>
 
@@ -370,7 +372,7 @@ let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/
 
 " The Silver Searcher
 if executable('ag')
-  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
+  let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git --ignore "*tags" -g ""'
   set grepprg=ag\ --nogroup\ --nocolor
 endif
 

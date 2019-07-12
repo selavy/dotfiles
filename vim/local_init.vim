@@ -13,6 +13,9 @@ set cino=N-s
 let g:syntastic_cpp_compiler = 'clang++'
 let g:syntastic_cpp_compiler_options = '-std=c++17'
 
+autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
+
 function! SwitchSourceHeader()
   "update!
   if (expand ("%:e") == "cpp")
@@ -26,29 +29,6 @@ nmap <leader>s :call SwitchSourceHeader()<CR>
 
 cabbr <expr> %% expand('%:p:h')
 
-" call s:h("IncSearch", s:bg, s:red, "")
-" call s:h("Search", s:bg, s:yellow, "")
-
-"" This didn't seem to work...
-" Plug 'haya14busa/incsearch.vim'
-" map /  <Plug>(incsearch-forward)
-" map ?  <Plug>(incsearch-backward)
-" map g/ <Plug>(incsearch-stay)
-
-" Plug 'haya14busa/is.vim'
-
-" function! s:hl_colorscheme_modify_molokai()
-"   " if g:colors_name isnot# 'molokai'
-"   "   return
-"   " endif
-"   highlight clear MatchParen
-"   highlight default MatchParen term=bold ctermfg=166 gui=bold guifg=#ef5939
-"   highlight clear Search
-"   highlight default Search term=bold cterm=bold ctermbg=24 guibg=#13354A ctermfg=244 guifg=#808080
-" endfunction
-" autocmd ColorScheme * call s:hl_colorscheme_modify_molokai()
-" colorscheme molokai
-
 if g:colors_name is# 'molokai'
     highlight clear MatchParen
     highlight default MatchParen term=bold ctermfg=166 gui=bold guifg=#ef5939
@@ -59,3 +39,34 @@ if g:colors_name is# 'molokai'
 endif
 
 let g:pymode_python = 'python3'
+
+""                                                    *'g:ctrlp_working_path_mode'*
+"" When starting up, CtrlP sets its local working directory according to this
+"" variable: >
+""   let g:ctrlp_working_path_mode = 'ra'
+"" <
+""   c - the directory of the current file.
+""   a - like "c", but only applies when the current working directory outside of
+""       CtrlP isn't a direct ancestor of the directory of the current file.
+""   r - the nearest ancestor that contains one of these directories or files:
+""       .git .hg .svn .bzr _darcs
+""   w - begin finding a root from the current working directory outside of CtrlP
+""       instead of from the directory of the current file (default). Only applies
+""       when "r" is also present.
+""   0 or <empty> - disable this feature.
+"let g:ctrlp_working_path_mode = 0
+let g:ctrlp_working_path_mode = 'ra'
+
+""  *'g:ctrlp_follow_symlinks'*
+"" If non-zero, CtrlP will follow symbolic links when listing files: >
+""   let g:ctrlp_follow_symlinks = 0
+"" <
+""   0 - don't follow symbolic links.
+""   1 - follow but ignore looped internal symlinks to avoid duplicates.
+""   2 - follow all symlinks indiscriminately.
+let g:ctrlp_follow_symlinks = 1
+
+""   *'g:ctrlp_mruf_save_on_update'*
+"" Set this to 0 to disable saving of the MRU list to hard drive whenever a new
+"" entry is added, saving will then only occur when exiting Vim: >
+let g:ctrlp_mruf_save_on_update = 0
